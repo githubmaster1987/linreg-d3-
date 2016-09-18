@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="utf-8">
+
+	<head>
+	 	
+		<meta charset="utf-8">
+		<!-- Required meta tags always come first --
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Title Page</title>
+
+		<!-- Bootstrap CSS -->
+
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+	</head>
+	<body>
+		<style type="text/css" media="screen">
+			svg
+			{
+				fill:white;
+				stroke:#708090;
+				stroke-width:5;
+				text-align: center;
+			}
+		</style>
+		<!-- jQuery -->
+		<script src="jQuery/jQuery-2.1.3.min.js"></script>
+		<!-- Bootstrap JavaScript -->
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="http://mbostock.github.com/d3/d3.v2.js"></script>
+		<script type="text/javascript">
+			$(function(){
+
+				var svgContainer = d3.select("#svg_container").append("svg")
+	                                     .attr("width", 600)
+	                                     .attr("height", 600);
+
+	             var center_x = 300;
+	             var center_y = 300;
+	             var base_x = 50;
+	             var base_y = 50;
+	             var width = 500;
+	             var height = 500;
+	 
+				 //Draw the Rectangle
+				 var rectangle = svgContainer.append("rect")
+				                             .attr("x", base_x)
+				                             .attr("y", base_y)
+				                            .attr("width", width)
+				                            .attr("height", height)
+				                            .attr("stroke-width", 10);
+
+
+				var poly_offset = 70;
+				var lineData = [ { "x": (width / 2) + base_x,   "y": poly_offset + base_y},  
+								 { "x": poly_offset + base_x,  "y": (height / 2) + base_y},
+				                 { "x": (width / 2) + base_x,  "y": height + base_y - poly_offset}, 
+				                 { "x": width + base_x - poly_offset,  "y": (height / 2) + base_y},
+				                 { "x": (width / 2) + base_x ,  "y": poly_offset + base_y}];
+				 
+				 //This is the accessor function we talked about above
+				 var lineFunction = d3.svg.line()
+				                          .x(function(d) { return d.x; })
+				                          .y(function(d) { return d.y; })
+				                         .interpolate("linear");
+
+                 var lineGraph = svgContainer.append("path")
+                            .attr("d", lineFunction(lineData));
+
+				 var circle_x = 480;
+                 var circle_y = 485;
+                 var circle_cnt = 0;
+                 var circle_left_offset = 35;
+				 var r = 15;
+				
+				circle_cnt = 0	 
+                 
+                var circle = svgContainer.append("circle")
+                         .attr("cx", circle_x).attr("cy", circle_y).attr("r", r)
+                         .attr("stroke-width", 1)
+                         .attr("id", "plus_circle")
+                
+                var offset = 5;
+                var line_plus1 = svgContainer.append("line")
+                          .attr("x1", circle_x + offset).attr("y1", circle_y)
+                          .attr("x2", circle_x - offset).attr("y2", circle_y)
+                          .attr("stroke-width", 1);
+
+                var line_plus2 = svgContainer.append("line")
+                          .attr("x1", circle_x).attr("y1", circle_y + offset)
+                          .attr("x2", circle_x).attr("y2", circle_y - offset)
+                          .attr("stroke-width", 1);					
+	            
+			
+				var rand_color = "black";
+
+				var add_circle = function()
+				 {
+				 	svgContainer.selectAll("#plus_circle").style("fill", "white");
+				 	svgContainer.selectAll("#filled_circle").remove();
+				 	for(i = 0; i < circle_cnt; i++)
+				 	{
+				 		svgContainer.append("circle")
+                         .attr("cx", circle_x - (i + 1) * circle_left_offset).attr("cy", circle_y).attr("r", r)
+                         .attr("stroke-width", 1)
+                         .attr("id", "filled_circle")
+                         .attr("fill", rand_color);
+				 	}
+
+				 	svgContainer.selectAll("#filled_circle").each(function(d, i) {
+				        $(this).on('click', function(d)
+				        {
+				        	if(circle_cnt == 4) 
+				        		circle_cnt--;
+				        	else
+				        		circle_cnt--;
+				        	
+				        	add_circle();
+				        });
+				    });
+				 }
+
+
+                svgContainer.selectAll("#plus_circle").on("click", function(d) {
+                	svgContainer.selectAll("#plus_circle").style("fill", "white");
+    				if(circle_cnt < 3) {
+    					circle_cnt++
+    					add_circle();
+    				}
+    				else if(circle_cnt == 3)
+    				{
+    					svgContainer.selectAll("#plus_circle").style("fill", rand_color)
+                        svgContainer.selectAll("line").style("fill", rand_color);
+                        circle_cnt++;
+    				}
+    				else
+    				{
+    					circle_cnt--;
+    					svgContainer.selectAll("#plus_circle").style("fill", white);
+    				}
+    				 
+				 });
+                
+	        });
+		</script>
+		<div class="container">
+		  <div class="row col-md-12 text-center" id="svg_container">
+		  </div>
+		</div>
+	</body>
+</html>

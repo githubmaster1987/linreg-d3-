@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="utf-8">
+
+	<head>
+	 	
+		<meta charset="utf-8">
+		<!-- Required meta tags always come first --
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Title Page</title>
+
+		<!-- Bootstrap CSS -->
+
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+	</head>
+	<body>
+		<style type="text/css" media="screen">
+			svg
+			{
+				fill:black;
+				stroke:black;
+				stroke-width:5;
+				text-align: center;
+			}
+		</style>
+		<!-- jQuery -->
+		<script src="jQuery/jQuery-2.1.3.min.js"></script>
+		<!-- Bootstrap JavaScript -->
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="http://mbostock.github.com/d3/d3.v2.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				var svgContainer = d3.select("#svg_container").append("svg")
+	                                     .attr("width", 600)
+	                                     .attr("height", 600);
+
+	             var center_x = 300;
+	             var center_y = 300;
+	             var base_x = 50;
+	             var base_y = 50;
+	             var width = 150;
+	             var height = 150;
+
+	             var poly_offset = 30; 
+	             var cx = new Array((width / 2) + base_x , width + base_x - poly_offset, (width / 2) + base_x,  poly_offset + base_x);
+	             var cy = new Array(height + base_y - poly_offset ,(height / 2) + base_y,poly_offset + base_y,(height / 2) + base_y);
+
+
+	             var r = 5;
+	             for(i = 0; i <4; i++)
+	             {
+	             	var circle = svgContainer.append("circle")
+                     .attr("cx", cx[i]).attr("cy", cy[i]).attr("r", r)
+                     .attr("stroke-width", 1)
+                     .attr("id", "plus_circle" + i)	
+                     .attr("circle_id", i);
+					
+					var circle1 = svgContainer.append("circle")
+                     .attr("cx", cx[i]).attr("cy", cy[i]).attr("r", r * 2)
+                     .attr("stroke-width", 1)
+                     .attr("id", "pink_circle" + i)	
+                     .attr("fill", "pink")
+                     .attr("stroke-color", "pink")
+                     .attr("color","pink")
+                     .attr("stroke","pink")
+                     .attr("circle_id", i);
+	             }
+	             var line_add = function(fir, sec){
+	             	var line = svgContainer.append("line")
+                          .attr("x1", cx[fir]).attr("y1", cy[fir])
+                          .attr("x2", cx[sec]).attr("y2", cy[sec])
+                          .attr("stroke-width", 5);
+	             }
+
+	             var pink_circle_add = function(ind)
+	             {
+	             	for(i = 0; i < 4; i++) {
+	             		var id = "#pink_circle" + i;
+	             		$(id).css('opacity', '0');
+	             		if(i == ind)
+	             			$(id).css('opacity', '1');
+	             	}
+	             }
+
+	             svgContainer.selectAll("circle").on("click", function(d) {
+	             	var cnt = $("line").length;
+	             	$("line").remove();
+	             	var id = $(this).attr("circle_id");
+	             	
+	             	var index = 0;
+	             	
+	             	for(i = 0; i < id; i++)
+	             		line_add(i , i +1);
+
+	             	if(id == 0) {
+	             		if(cnt == 4) return;
+
+	             		line_add(1, 0);
+	             		line_add(2, 1);
+	             		line_add(3, 2);
+	             		line_add(3, 0);
+	             	}
+	             	
+				 });
+
+				 svgContainer.selectAll("circle").on("mouseover", function() {
+				 	var id = $(this).attr("circle_id");
+				 	pink_circle_add(id);
+				 });
+
+				 svgContainer.selectAll("circle").on("mouseout", function(){
+				 	pink_circle_add(-1);
+				 });
+                pink_circle_add(-1);
+	        });
+		</script>
+		<div class="container">
+		  <div class="row col-md-12 text-center" id="svg_container">
+		  </div>
+		</div>
+	</body>
+</html>
